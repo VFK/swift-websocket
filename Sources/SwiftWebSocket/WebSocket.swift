@@ -144,7 +144,7 @@ public actor WebSocket {
     /// - Throws WebSocketError.notConnected when the `send` method is called before the WebSocket is connected.
     public func send<Encoder>(
         _ value: any Encodable,
-        encoder: Encoder
+        encoder: Encoder = JSONEncoder()
     ) async throws where Encoder: TopLevelEncoder, Encoder.Output == Data {
         let data = try encoder.encode(value)
         try await send(.data(data))
