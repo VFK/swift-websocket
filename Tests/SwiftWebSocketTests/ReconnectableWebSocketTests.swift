@@ -7,6 +7,7 @@
 
 import Foundation
 import Testing
+
 @testable import SwiftWebSocket
 
 struct ReconnectableWebSocketTests {
@@ -29,7 +30,7 @@ struct ReconnectableWebSocketTests {
 
         #expect(await webSocket.state == .connected)
         #expect(stateEvents == [.connecting, .connected])
-        
+
         task.cancel()
     }
 
@@ -84,7 +85,8 @@ struct ReconnectableWebSocketTests {
         try await Task.sleep(for: .seconds(1))
 
         #expect(await webSocket.state == .disconnected)
-        #expect(stateEvents == [.connecting, .connected, .disconnected(closeCode: .goingAway, reason: "See you later")])
+        #expect(
+            stateEvents == [.connecting, .connected, .disconnected(closeCode: .goingAway, reason: "See you later")])
 
         task.cancel()
     }
@@ -105,13 +107,14 @@ struct ReconnectableWebSocketTests {
         try await Task.sleep(for: .seconds(1))
 
         #expect(await webSocket.state == .connected)
-        #expect(stateEvents == [
-            .connecting,
-            .connected,
-            .disconnected(closeCode: .normalClosure, reason: nil),
-            .connecting,
-            .connected
-        ])
+        #expect(
+            stateEvents == [
+                .connecting,
+                .connected,
+                .disconnected(closeCode: .normalClosure, reason: nil),
+                .connecting,
+                .connected,
+            ])
 
         task.cancel()
     }

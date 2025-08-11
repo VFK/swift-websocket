@@ -1,5 +1,6 @@
 import Foundation
 import Testing
+
 @testable import SwiftWebSocket
 
 struct WebSocketTests {
@@ -75,7 +76,8 @@ struct WebSocketTests {
         try await webSocket.disconnect(closeCode: .goingAway, reason: "See you later")
 
         #expect(await webSocket.state == .disconnected)
-        #expect(stateEvents == [.connecting, .connected, .disconnected(closeCode: .goingAway, reason: "See you later")])
+        #expect(
+            stateEvents == [.connecting, .connected, .disconnected(closeCode: .goingAway, reason: "See you later")])
         #expect(stateEventsFinished)
     }
 

@@ -1,5 +1,5 @@
-import Foundation
 import Combine
+import Foundation
 
 public actor WebSocket {
     private(set) var state: State = .notConnected
@@ -103,9 +103,9 @@ public actor WebSocket {
             socketTask.resume()
         }
     }
-    
+
     /// Disconnects the WebSocket.
-    ///  
+    ///
     /// After the WebSocket disconnects, it can no longer be connected. If you want to establish a new connection
     /// you must create a new WebSocket instance.
     ///
@@ -149,7 +149,7 @@ public actor WebSocket {
         let data = try encoder.encode(value)
         try await send(.data(data))
     }
-    
+
     /// Sends the given `string` through the websocket.
     ///
     /// - Throws WebSocketError.notConnected when the `send` method is called before the WebSocket is connected.
@@ -249,10 +249,11 @@ public actor WebSocket {
         reason: Data?
     ) {
         state = .disconnected
-        stateEventsContinuation.yield(.disconnected(
-            closeCode: closeCode,
-            reason: reason.flatMap { String(data: $0, encoding: .utf8) }
-        ))
+        stateEventsContinuation.yield(
+            .disconnected(
+                closeCode: closeCode,
+                reason: reason.flatMap { String(data: $0, encoding: .utf8) }
+            ))
         stateEventsContinuation.finish()
 
         messagesContinuation.finish(throwing: error)
@@ -263,12 +264,15 @@ public actor WebSocket {
 
 private final class SocketTaskDelegate: NSObject, URLSessionWebSocketDelegate {
     private let onWebSocketTaskDidOpen: @Sendable (_ protocol: String?) async -> Void
-    private let onWebSocketTaskDidClose: @Sendable (_ code: URLSessionWebSocketTask.CloseCode, _ reason: Data?) async -> Void
+    private let onWebSocketTaskDidClose:
+        @Sendable (_ code: URLSessionWebSocketTask.CloseCode, _ reason: Data?) async -> Void
     private let onWebSocketTaskDidCompleteWithError: @Sendable (_ error: Error?) async -> Void
 
     init(
         onWebSocketTaskDidOpen: @Sendable @escaping (_: String?) async -> Void,
-        onWebSocketTaskDidClose: @Sendable @escaping (_: URLSessionWebSocketTask.CloseCode, _: Data?) async -> Void,
+        onWebSocketTaskDidClose: @Sendable @escaping (
+            _: URLSessionWebSocketTask.CloseCode, _: Data?
+        ) async -> Void,
         onWebSocketTaskDidCompleteWithError: @Sendable @escaping (_: Error?) async -> Void
     ) {
         self.onWebSocketTaskDidOpen = onWebSocketTaskDidOpen
@@ -297,7 +301,9 @@ private final class SocketTaskDelegate: NSObject, URLSessionWebSocketDelegate {
         }
     }
 
-    public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+    public func urlSession(
+        _ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?
+    ) {
         Task {
             await onWebSocketTaskDidCompleteWithError(error)
         }

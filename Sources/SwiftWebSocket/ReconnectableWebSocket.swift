@@ -1,12 +1,12 @@
-import Foundation
 import Combine
+import Foundation
 
 actor ReconnectableWebSocket {
     /// A stream of messages received by the socket.
     ///
     /// This stream will only finish when ReconnectableWebSocket deinitializes.
     public nonisolated let messages: AsyncStream<WebSocket.Message>
-    
+
     /// A stream of changes to the socket state.
     ///
     /// This stream will only finish when ReconnectableWebSocket deinitializes.
@@ -29,7 +29,7 @@ actor ReconnectableWebSocket {
     private var stateEventsTask: Task<Void, Error>?
 
     private var webSocket: WebSocket?
-    
+
     /// Create a WebSocket that will automatically reconnect if the connection was lost due to an error.
     ///
     /// Every time the WebSocket will (re)connect, the `connector` closure will be called to obtain a
@@ -119,7 +119,7 @@ actor ReconnectableWebSocket {
         guard await webSocket?.state == .connected else {
             throw WebSocketError.notConnected
         }
-        
+
         let data = try encoder.encode(value)
         try await webSocket?.send(data)
     }
