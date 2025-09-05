@@ -1,7 +1,7 @@
 import Combine
 import Foundation
 
-actor ReconnectableWebSocket {
+public actor ReconnectableWebSocket {
     /// A stream of messages received by the socket.
     ///
     /// This stream will only finish when ReconnectableWebSocket deinitializes.
